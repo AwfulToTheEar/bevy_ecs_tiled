@@ -1,13 +1,18 @@
 use crate::{prelude::*, tiled::properties::types_json::*};
-use bevy::reflect::list::ListInfo;
 use bevy::{
     ecs::reflect::ReflectBundle,
     platform::collections::HashMap,
     prelude::*,
     reflect::{
-        ArrayInfo, EnumInfo, ListInfo, MapInfo, NamedField, ReflectRef, SetInfo, StructInfo,
-        TupleInfo, TupleStructInfo, TypeInfo, TypeRegistration, TypeRegistry, UnnamedField,
-        VariantInfo,
+        list::ListInfo,
+        set::SetInfo,
+        map::MapInfo,
+        array::ArrayInfo,
+        enums::{EnumInfo, VariantInfo},
+        structs::StructInfo,
+        tuple::TupleInfo,
+        tuple_struct::TupleStructInfo,
+        NamedField, ReflectRef, TypeInfo, TypeRegistration, TypeRegistry, UnnamedField,
     },
 };
 use serde_json::Value;
@@ -21,12 +26,8 @@ type ExportConversionResult = Result<Vec<TypeExport>, ExportConversionError>;
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone, Error)]
 enum ExportConversionError {
-    #[error("map fields are not supported")]
-    MapUnsupported,
     #[error("field of type {0} is not supported")]
     UnsupportedValue(&'static str),
-    #[error("set fields are not supported")]
-    SetUnsupported,
     #[error("a dependency is not supported")]
     DependencyError,
 }
@@ -114,6 +115,7 @@ impl TypeExportRegistry {
                 | TypeInfo::Tuple(_)
                 | TypeInfo::Array(_)
                 | TypeInfo::List(_)
+                | TypeInfo::Map(_)
                 | TypeInfo::Set(_)
                 | TypeInfo::Enum(_)
                 | TypeInfo::Opaque(_)
@@ -762,9 +764,6 @@ fn type_to_field(
     t: &TypeRegistration,
 ) -> Result<(FieldType, Option<String>), ExportConversionError> {
     let info = t.type_info();
-    if matches!(info, TypeInfo::Map(_)) {
-        return Err(ExportConversionError::MapUnsupported);
-    }
     Ok(match info.type_path() {
         "bool" => (FieldType::Bool, None),
         "f32" | "f64" => (FieldType::Float, None),
