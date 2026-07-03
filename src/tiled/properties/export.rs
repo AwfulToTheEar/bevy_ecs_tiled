@@ -20,8 +20,6 @@ type ExportConversionResult = Result<Vec<TypeExport>, ExportConversionError>;
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone, Error)]
 enum ExportConversionError {
-    #[error("lists fields are not supported")]
-    ListUnsupported,
     #[error("map fields are not supported")]
     MapUnsupported,
     #[error("field of type {0} is not supported")]
@@ -289,7 +287,7 @@ impl TypeExportRegistry {
         registry: &TypeRegistry,
         use_as: Vec<UseAs>,
     ) -> ExportConversionResult {
-        let (type_field, property_type) =
+        let (_type_field, _property_type) =
             type_to_field(registry.get(info.item_ty().id()).unwrap())?;
 
         let root = TypeExport {

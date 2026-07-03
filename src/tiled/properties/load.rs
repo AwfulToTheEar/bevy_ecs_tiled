@@ -331,7 +331,7 @@ impl DeserializedProperties {
             }
             ("core::option::Option<bevy_ecs::entity::Entity>", PV::ObjectValue(o), _) => {
                 Ok(Box::new(
-                    Some(Entity::from_raw_u32(o).expect("Wrong entity ID")).filter(|_| o != 0),
+                    (o != 0).then_some(Entity::from_raw_u32(o).expect("Wrong entity ID")),
                 ))
             }
             (_, PV::StringValue(s), TypeInfo::Enum(info)) => {
@@ -571,7 +571,7 @@ impl DeserializedProperties {
                     list.push(value)
                 }
 
-                let mut out = DynamicList::from_iter(list.into_iter());
+                let mut out = DynamicList::from_iter(list);
                 out.set_represented_type(Some(registration.type_info()));
 
                 Ok(Box::new(out))

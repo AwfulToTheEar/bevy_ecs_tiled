@@ -37,7 +37,7 @@ pub(crate) struct Member {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub(crate) struct ListItem {
+pub(crate) struct _ListItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub property_type: Option<String>,
     #[serde(rename = "type")]
