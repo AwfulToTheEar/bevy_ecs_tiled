@@ -1,4 +1,4 @@
-//! This example demonstrates loading a map with a Tiled text.
+//! This example shows the basic usage of the plugin.
 
 use bevy::prelude::*;
 use bevy_ecs_tiled::prelude::*;
@@ -27,7 +27,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
     // Load a map then spawn it
     commands.spawn((
         // Only the [`TiledMap`] component is actually required to spawn a map.
-        TiledMap(asset_server.load("maps/orthogonal/text.tmx")),
+        TiledMap(asset_server.load("maps/orthogonal/group_layers.tmx")),
         // But you can add extra components to change the defaults settings and how
         // your map is actually displayed
         TilemapAnchor::Center,
