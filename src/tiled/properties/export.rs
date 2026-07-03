@@ -9,6 +9,8 @@ use bevy::{
     },
 };
 use std::borrow::Cow;
+use bevy::reflect::ListInfo;
+use serde_json::Value;
 use thiserror::Error;
 
 const DEFAULT_COLOR: &str = "#000000";
@@ -112,6 +114,8 @@ impl TypeExportRegistry {
                 | TypeInfo::Struct(_)
                 | TypeInfo::Tuple(_)
                 | TypeInfo::Array(_)
+                | TypeInfo::List(_)
+                | TypeInfo::Set(_)
                 | TypeInfo::Enum(_)
                 | TypeInfo::Opaque(_)
         )
@@ -165,7 +169,7 @@ impl TypeExportRegistry {
             TypeInfo::Tuple(info) => {
                 self.generate_tuple_export(info, registry, default_value, use_as)
             }
-            TypeInfo::List(_) => Err(ExportConversionError::ListUnsupported),
+            TypeInfo::List(info) => self.generate_list_export(info, registry, use_as),
             TypeInfo::Array(info) => self.generate_array_export(info, registry, use_as),
             TypeInfo::Map(_) => Err(ExportConversionError::MapUnsupported),
             TypeInfo::Enum(info) => self.generate_enum_export(info, registry, use_as),
@@ -273,6 +277,44 @@ impl TypeExportRegistry {
                         value: Default::default(),
                     })
                     .collect(),
+            }),
+        };
+
+        Ok(vec![root])
+    }
+
+    fn generate_list_export(
+        &mut self,
+        info: &ListInfo,
+        registry: &TypeRegistry,
+        use_as: Vec<UseAs>,
+    ) -> ExportConversionResult {
+        let (type_field, property_type) =
+            type_to_field(registry.get(info.item_ty().id()).unwrap())?;
+
+        let root = TypeExport {
+            id: self.next_id(),
+            name: info.type_path().to_string(),
+            type_data: TypeData::Class(Class {
+                use_as,
+                color: DEFAULT_COLOR.to_string(),
+                draw_fill: true,
+                members: vec![Member {
+                    name: "list".to_string(),
+                    property_type: None,
+                    type_field: FieldType::List,
+                    value: Value::Array(vec![]),
+                    // for some reason this does not create the correct list item type in tiled
+                    /*
+                    value: Value::Array(vec![
+                        serde_json::to_value(ListItem {
+                            property_type: property_type.clone(),
+                            type_field,
+                            value: Default::default(),
+                        }).unwrap()
+                    ]),
+                    */
+                }],
             }),
         };
 
@@ -619,9 +661,7 @@ fn type_to_field(
     t: &TypeRegistration,
 ) -> Result<(FieldType, Option<String>), ExportConversionError> {
     let info = t.type_info();
-    if matches!(info, TypeInfo::List(_)) {
-        return Err(ExportConversionError::ListUnsupported);
-    } else if matches!(info, TypeInfo::Map(_)) {
+    if matches!(info, TypeInfo::Map(_)) {
         return Err(ExportConversionError::MapUnsupported);
     }
     Ok(match info.type_path() {

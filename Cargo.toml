@@ -66,9 +66,12 @@ avian2d = { version = "0.6", optional = true }
 serde = { version = "1.0", optional = true, features = ["derive"] }
 serde_json = { version = "1.0", optional = true }
 
+[patch.crates-io]
+tiled = { path = "../rs-tiled" }
+
 # docs.rs-specific configuration
 [package.metadata.docs.rs]
-features = ["debug","user_properties","physics","avian","rapier"]
+features = ["debug", "user_properties", "physics", "avian", "rapier"]
 
 # cargo-all-features configuration
 [package.metadata.cargo-all-features]

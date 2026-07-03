@@ -11,7 +11,7 @@ use bevy::{
     },
 };
 use std::path::PathBuf;
-
+use bevy::reflect::DynamicList;
 use crate::prelude::tiled::PropertyValue as PV;
 
 #[derive(Debug, Clone)]
@@ -541,14 +541,39 @@ impl DeserializedProperties {
                     info.type_path()
                 ))
             }
-            (_, PV::ClassValue { .. }, TypeInfo::List(_)) => {
-                Err("lists are currently unsupported".to_string())
-            }
-            (_, PV::ClassValue { .. }, TypeInfo::Map(_)) => {
-                Err("maps are currently unsupported".to_string())
+            (_, PV::ClassValue { mut properties, .. }, TypeInfo::List(info)) => {
+                let mut list = Vec::new();
+
+                let Some(reg) = registry.get(info.item_ty().id()) else {
+                    return Err(format!(
+                        "type `{}` is not registered",
+                        info.item_ty().path()
+                    ));
+                };
+
+                let Some(pv) = properties.remove("list") else {
+                    return Err(format!("missing property on `{}`: `list`", info.type_path(),));
+                };
+
+                let PV::ListValue(items) = pv else {
+                    return Err(format!("wrong property type on `{}`: `list`", info.type_path(),));
+                };
+
+                for item in items {
+                    let value = Self::deserialize_property(item, reg, registry, load_cx, default_value)?;
+                    list.push(value)
+                }
+
+                let mut out = DynamicList::from_iter(list.into_iter());
+                out.set_represented_type(Some(registration.type_info()));
+
+                Ok(Box::new(out))
             }
             (_, PV::ClassValue { .. }, TypeInfo::Set(_)) => {
                 Err("sets are currently unsupported".to_string())
+            }
+            (_, PV::ClassValue { .. }, TypeInfo::Map(_)) => {
+                Err("maps are currently unsupported".to_string())
             }
             // Note: ClassValue and TypeInfo::Value is not included
             (a, b, c) => Err(format!(
