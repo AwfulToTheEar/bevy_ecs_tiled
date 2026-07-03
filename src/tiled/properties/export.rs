@@ -1,4 +1,5 @@
 use crate::{prelude::*, tiled::properties::types_json::*};
+use bevy::reflect::ListInfo;
 use bevy::{
     ecs::reflect::ReflectBundle,
     platform::collections::HashMap,
@@ -8,9 +9,8 @@ use bevy::{
         TypeInfo, TypeRegistration, TypeRegistry, UnnamedField, VariantInfo,
     },
 };
-use std::borrow::Cow;
-use bevy::reflect::ListInfo;
 use serde_json::Value;
+use std::borrow::Cow;
 use thiserror::Error;
 
 const DEFAULT_COLOR: &str = "#000000";

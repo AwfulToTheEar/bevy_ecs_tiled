@@ -39,9 +39,9 @@
      </property>
     </properties>
    </property>
-   <property name="Resource" type="class">
+   <property name="Resource" type="class" propertytype="properties_basic::Resource">
     <properties>
-     <property name=":variant" type="int" value="3"/>
+     <property name=":variant" propertytype="properties_basic::Resource:::Variant" value="Wood"/>
     </properties>
    </property>
   </properties>
@@ -112,9 +112,9 @@
      </property>
     </properties>
    </property>
-   <property name="Resource" type="class">
+   <property name="Resource" type="class" propertytype="properties_basic::Resource">
     <properties>
-     <property name=":variant" type="int" value="2"/>
+     <property name=":variant" propertytype="properties_basic::Resource:::Variant" value="Strawberry"/>
     </properties>
    </property>
   </properties>

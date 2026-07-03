@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+### Features
+
+- add support for list properties (#212)
+
 ## v0.12.0
 
 **BREAKING CHANGES**

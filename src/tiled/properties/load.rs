@@ -1,4 +1,6 @@
+use crate::prelude::tiled::PropertyValue as PV;
 use crate::prelude::*;
+use bevy::reflect::DynamicList;
 use bevy::{
     asset::LoadContext,
     ecs::reflect::ReflectBundle,
@@ -11,8 +13,6 @@ use bevy::{
     },
 };
 use std::path::PathBuf;
-use bevy::reflect::DynamicList;
-use crate::prelude::tiled::PropertyValue as PV;
 
 #[derive(Debug, Clone)]
 pub(crate) struct DeserializedMapProperties<const HYDRATED: bool = false> {
@@ -552,15 +552,22 @@ impl DeserializedProperties {
                 };
 
                 let Some(pv) = properties.remove("list") else {
-                    return Err(format!("missing property on `{}`: `list`", info.type_path(),));
+                    return Err(format!(
+                        "missing property on `{}`: `list`",
+                        info.type_path(),
+                    ));
                 };
 
                 let PV::ListValue(items) = pv else {
-                    return Err(format!("wrong property type on `{}`: `list`", info.type_path(),));
+                    return Err(format!(
+                        "wrong property type on `{}`: `list`",
+                        info.type_path(),
+                    ));
                 };
 
                 for item in items {
-                    let value = Self::deserialize_property(item, reg, registry, load_cx, default_value)?;
+                    let value =
+                        Self::deserialize_property(item, reg, registry, load_cx, default_value)?;
                     list.push(value)
                 }
 
