@@ -67,7 +67,7 @@ serde = { version = "1.0", optional = true, features = ["derive"] }
 serde_json = { version = "1.0", optional = true }
 
 [patch.crates-io]
-tiled = { path = "../rs-tiled" }
+tiled = { git = "https://github.com/AwfulToTheEar/rs-tiled.git", branch = "list-properties" }
 
 # docs.rs-specific configuration
 [package.metadata.docs.rs]
