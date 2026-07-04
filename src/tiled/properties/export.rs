@@ -1,12 +1,13 @@
 use crate::{prelude::*, tiled::properties::types_json::*};
-use bevy::reflect::ListInfo;
+use bevy::reflect::list::ListInfo;
 use bevy::{
     ecs::reflect::ReflectBundle,
     platform::collections::HashMap,
     prelude::*,
     reflect::{
-        ArrayInfo, EnumInfo, NamedField, ReflectRef, StructInfo, TupleInfo, TupleStructInfo,
-        TypeInfo, TypeRegistration, TypeRegistry, UnnamedField, VariantInfo,
+        ArrayInfo, EnumInfo, ListInfo, MapInfo, NamedField, ReflectRef, SetInfo, StructInfo,
+        TupleInfo, TupleStructInfo, TypeInfo, TypeRegistration, TypeRegistry, UnnamedField,
+        VariantInfo,
     },
 };
 use serde_json::Value;
@@ -169,10 +170,10 @@ impl TypeExportRegistry {
             }
             TypeInfo::List(info) => self.generate_list_export(info, registry, use_as),
             TypeInfo::Array(info) => self.generate_array_export(info, registry, use_as),
-            TypeInfo::Map(_) => Err(ExportConversionError::MapUnsupported),
+            TypeInfo::Map(info) => self.generate_map_export(info, registry, use_as),
             TypeInfo::Enum(info) => self.generate_enum_export(info, registry, use_as),
             TypeInfo::Opaque(_) => Ok(vec![]),
-            TypeInfo::Set(_) => Err(ExportConversionError::SetUnsupported),
+            TypeInfo::Set(info) => self.generate_set_export(info, registry, use_as),
         };
 
         if out.is_ok() {
@@ -299,6 +300,108 @@ impl TypeExportRegistry {
                 draw_fill: true,
                 members: vec![Member {
                     name: "list".to_string(),
+                    property_type: None,
+                    type_field: FieldType::List,
+                    value: Value::Array(vec![]),
+                    // for some reason this does not create the correct list item type in tiled
+                    /*
+                    value: Value::Array(vec![
+                        serde_json::to_value(ListItem {
+                            property_type: property_type.clone(),
+                            type_field,
+                            value: Default::default(),
+                        }).unwrap()
+                    ]),
+                    */
+                }],
+            }),
+        };
+
+        Ok(vec![root])
+    }
+
+    fn generate_map_export(
+        &mut self,
+        info: &MapInfo,
+        registry: &TypeRegistry,
+        use_as: Vec<UseAs>,
+    ) -> ExportConversionResult {
+        let (value_type_field, value_property_type) =
+            type_to_field(registry.get(info.item_ty().id()).unwrap())?;
+        let (key_type_field, key_property_type) =
+            type_to_field(registry.get(info.key_ty().id()).unwrap())?;
+
+        let root = TypeExport {
+            id: self.next_id(),
+            name: info.type_path().to_string(),
+            type_data: TypeData::Class(Class {
+                use_as,
+                color: DEFAULT_COLOR.to_string(),
+                draw_fill: true,
+                members: vec![Member {
+                    name: "map".to_string(),
+                    property_type: None,
+                    type_field: FieldType::List,
+                    value: Value::Array(vec![]),
+                    // for some reason this does not create the correct list item type in tiled
+                    /*
+                    value: Value::Array(vec![
+                        serde_json::to_value(ListItem {
+                            property_type: property_type.clone(),
+                            type_field,
+                            value: Default::default(),
+                        }).unwrap()
+                    ]),
+                    */
+                }],
+            }),
+        };
+
+        let map_item = TypeExport {
+            id: self.next_id(),
+            name: format!("{}:::MapItem", info.type_path()),
+            type_data: TypeData::Class(Class {
+                use_as: USE_AS_PROPERTY.to_vec(),
+                color: DEFAULT_COLOR.to_string(),
+                draw_fill: true,
+                members: vec![
+                    Member {
+                        name: "key".to_string(),
+                        property_type: key_property_type.clone(),
+                        type_field: key_type_field,
+                        value: Default::default(),
+                    },
+                    Member {
+                        name: "value".to_string(),
+                        property_type: value_property_type.clone(),
+                        type_field: value_type_field,
+                        value: Default::default(),
+                    },
+                ],
+            }),
+        };
+
+        Ok(vec![root, map_item])
+    }
+
+    fn generate_set_export(
+        &mut self,
+        info: &SetInfo,
+        registry: &TypeRegistry,
+        use_as: Vec<UseAs>,
+    ) -> ExportConversionResult {
+        let (_type_field, _property_type) =
+            type_to_field(registry.get(info.item_ty().id()).unwrap())?;
+
+        let root = TypeExport {
+            id: self.next_id(),
+            name: info.type_path().to_string(),
+            type_data: TypeData::Class(Class {
+                use_as,
+                color: DEFAULT_COLOR.to_string(),
+                draw_fill: true,
+                members: vec![Member {
+                    name: "set".to_string(),
                     property_type: None,
                     type_field: FieldType::List,
                     value: Value::Array(vec![]),
