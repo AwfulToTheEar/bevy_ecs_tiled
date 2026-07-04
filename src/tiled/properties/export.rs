@@ -17,6 +17,7 @@ use bevy::{
 };
 use serde_json::Value;
 use std::borrow::Cow;
+use bevy::reflect::list::ListInfo;
 use thiserror::Error;
 
 const DEFAULT_COLOR: &str = "#000000";

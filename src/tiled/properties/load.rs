@@ -21,6 +21,7 @@ use bevy::{
 use std::alloc;
 use std::collections::HashSet;
 use std::path::PathBuf;
+use bevy::reflect::list::DynamicList;
 
 #[derive(Debug, Clone)]
 pub(crate) struct DeserializedMapProperties<const HYDRATED: bool = false> {
