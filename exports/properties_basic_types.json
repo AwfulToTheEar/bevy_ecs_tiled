@@ -1,6 +1,6 @@
 [
   {
-    "id": 12,
+    "id": 13,
     "name": "alloc::vec::Vec<properties_basic::BiomeType>",
     "type": "class",
     "useAs": [
@@ -17,7 +17,24 @@
     ]
   },
   {
-    "id": 11,
+    "id": 19,
+    "name": "alloc::vec::Vec<properties_basic::Wave>",
+    "type": "class",
+    "useAs": [
+      "property"
+    ],
+    "color": "#000000",
+    "drawFill": true,
+    "members": [
+      {
+        "name": "list",
+        "type": "list",
+        "value": []
+      }
+    ]
+  },
+  {
+    "id": 12,
     "name": "bevy_color::color::Color",
     "type": "class",
     "useAs": [
@@ -89,7 +106,7 @@
     ]
   },
   {
-    "id": 17,
+    "id": 18,
     "name": "core::option::Option<bevy_ecs::entity::Entity>",
     "type": "class",
     "useAs": [
@@ -113,7 +130,7 @@
     ]
   },
   {
-    "id": 15,
+    "id": 16,
     "name": "core::option::Option<bevy_ecs::entity::Entity>:::Variant",
     "type": "enum",
     "storageType": "string",
@@ -124,7 +141,7 @@
     "valuesAsFlags": false
   },
   {
-    "id": 16,
+    "id": 17,
     "name": "core::option::Option<bevy_ecs::entity::Entity>::Some",
     "type": "class",
     "useAs": [
@@ -136,6 +153,58 @@
       {
         "name": "0",
         "type": "object",
+        "value": null
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "name": "core::option::Option<f32>",
+    "type": "class",
+    "useAs": [
+      "property"
+    ],
+    "color": "#000000",
+    "drawFill": true,
+    "members": [
+      {
+        "name": ":variant",
+        "propertyType": "core::option::Option<f32>:::Variant",
+        "type": "class",
+        "value": "None"
+      },
+      {
+        "name": "Some",
+        "propertyType": "core::option::Option<f32>::Some",
+        "type": "class",
+        "value": null
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "name": "core::option::Option<f32>:::Variant",
+    "type": "enum",
+    "storageType": "string",
+    "values": [
+      "None",
+      "Some"
+    ],
+    "valuesAsFlags": false
+  },
+  {
+    "id": 23,
+    "name": "core::option::Option<f32>::Some",
+    "type": "class",
+    "useAs": [
+      "property"
+    ],
+    "color": "#000000",
+    "drawFill": true,
+    "members": [
+      {
+        "name": "0",
+        "type": "float",
         "value": null
       }
     ]
@@ -169,7 +238,7 @@
     ]
   },
   {
-    "id": 14,
+    "id": 15,
     "name": "properties_basic::BiomeType",
     "type": "class",
     "useAs": [
@@ -187,7 +256,7 @@
     ]
   },
   {
-    "id": 13,
+    "id": 14,
     "name": "properties_basic::BiomeType:::Variant",
     "type": "enum",
     "storageType": "string",
@@ -317,6 +386,142 @@
       {
         "name": "other_obj",
         "type": "object",
+        "value": null
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "name": "properties_basic::SpawnableType",
+    "type": "class",
+    "useAs": [
+      "property"
+    ],
+    "color": "#000000",
+    "drawFill": true,
+    "members": [
+      {
+        "name": ":variant",
+        "propertyType": "properties_basic::SpawnableType:::Variant",
+        "type": "class",
+        "value": "Tank"
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "name": "properties_basic::SpawnableType:::Variant",
+    "type": "enum",
+    "storageType": "string",
+    "values": [
+      "Tank",
+      "HeavyTank",
+      "Infantry",
+      "LaserTank",
+      "MedPack"
+    ],
+    "valuesAsFlags": false
+  },
+  {
+    "id": 25,
+    "name": "properties_basic::Wave",
+    "type": "class",
+    "useAs": [
+      "property"
+    ],
+    "color": "#000000",
+    "drawFill": true,
+    "members": [
+      {
+        "name": "units_to_spawn",
+        "propertyType": "std::collections::HashMap<properties_basic::SpawnableType, usize, std::collections::hash_map::RandomState>",
+        "type": "class",
+        "value": null
+      },
+      {
+        "name": "delay",
+        "type": "float",
+        "value": 0.0
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "name": "properties_basic::WaveManager",
+    "type": "class",
+    "useAs": [
+      "property"
+    ],
+    "color": "#000000",
+    "drawFill": true,
+    "members": [
+      {
+        "name": "waves",
+        "propertyType": "alloc::vec::Vec<properties_basic::Wave>",
+        "type": "class",
+        "value": null
+      },
+      {
+        "name": "to_spawn",
+        "propertyType": "std::collections::HashMap<properties_basic::SpawnableType, usize, std::collections::hash_map::RandomState>",
+        "type": "class",
+        "value": null
+      },
+      {
+        "name": "spawn_time",
+        "type": "float",
+        "value": null
+      },
+      {
+        "name": "last_wave",
+        "propertyType": "core::option::Option<f32>",
+        "type": "class",
+        "value": null
+      },
+      {
+        "name": "cleared_last_wave",
+        "propertyType": "core::option::Option<f32>",
+        "type": "class",
+        "value": null
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "name": "std::collections::HashMap<properties_basic::SpawnableType, usize, std::collections::hash_map::RandomState>",
+    "type": "class",
+    "useAs": [
+      "property"
+    ],
+    "color": "#000000",
+    "drawFill": true,
+    "members": [
+      {
+        "name": "map",
+        "type": "list",
+        "value": []
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "name": "std::collections::HashMap<properties_basic::SpawnableType, usize, std::collections::hash_map::RandomState>:::MapItem",
+    "type": "class",
+    "useAs": [
+      "property"
+    ],
+    "color": "#000000",
+    "drawFill": true,
+    "members": [
+      {
+        "name": "key",
+        "propertyType": "properties_basic::SpawnableType",
+        "type": "string",
+        "value": null
+      },
+      {
+        "name": "value",
+        "type": "int",
         "value": null
       }
     ]

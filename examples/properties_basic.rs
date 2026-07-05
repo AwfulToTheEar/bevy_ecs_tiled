@@ -1,7 +1,8 @@
 //! This example shows how to map custom tiles and objects properties from Tiled to Bevy Components.
 
+use std::collections::HashMap;
 use std::env;
-
+use std::time::Duration;
 use bevy::prelude::*;
 use bevy_ecs_tiled::prelude::*;
 

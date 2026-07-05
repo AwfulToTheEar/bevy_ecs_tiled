@@ -617,14 +617,14 @@ impl DeserializedProperties {
             (_, PV::ClassValue { mut properties, .. }, TypeInfo::Map(info)) => {
                 let mut list = Vec::new();
 
-                let Some(reg) = registry.get(info.key_ty().id()) else {
+                let Some(key_reg) = registry.get(info.key_ty().id()) else {
                     return Err(format!(
                         "key type `{}` is not registered",
                         info.key_ty().path()
                     ));
                 };
 
-                let Some(reg) = registry.get(info.value_ty().id()) else {
+                let Some(value_reg) = registry.get(info.value_ty().id()) else {
                     return Err(format!(
                         "value type `{}` is not registered",
                         info.value_ty().path()
@@ -642,6 +642,8 @@ impl DeserializedProperties {
                     ));
                 };
 
+                info!("{:?}", items.clone());
+
                 for item in items {
                     let PV::ClassValue { mut properties, .. } = item else {
                         return Err(format!("wrong property type for map item"));
@@ -653,7 +655,7 @@ impl DeserializedProperties {
 
                     let key = Self::deserialize_property(
                         key_prop,
-                        reg,
+                        key_reg,
                         registry,
                         load_cx,
                         default_value,
@@ -665,7 +667,7 @@ impl DeserializedProperties {
 
                     let value = Self::deserialize_property(
                         value_prop,
-                        reg,
+                        value_reg,
                         registry,
                         load_cx,
                         default_value,
