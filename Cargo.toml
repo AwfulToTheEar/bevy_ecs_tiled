@@ -51,7 +51,7 @@ user_properties = ["dep:serde", "dep:serde_json"]
 # Main dependencies
 bevy = { version = "0.19.0", default-features = false }
 bevy_ecs_tilemap = { git = "https://github.com/taboky-dev/bevy_ecs_tilemap.git", rev = "b5dfea8", default-features = false }
-tiled = { version = "0.15", features = ["world"] }
+tiled = { git = "https://github.com/AwfulToTheEar/rs-tiled.git", branch = "list-properties", features = ["world"] }
 
 # Utilities
 futures-lite = "2.6"
@@ -65,9 +65,6 @@ bevy_rapier2d = { version = "0.34", optional = true }
 avian2d = { version = "0.7", optional = true }
 serde = { version = "1.0", optional = true, features = ["derive"] }
 serde_json = { version = "1.0", optional = true }
-
-[patch.crates-io]
-tiled = { git = "https://github.com/AwfulToTheEar/rs-tiled.git", branch = "list-properties" }
 
 # docs.rs-specific configuration
 [package.metadata.docs.rs]
