@@ -17,7 +17,6 @@ use bevy::{
 };
 use serde_json::Value;
 use std::borrow::Cow;
-use bevy::reflect::list::ListInfo;
 use thiserror::Error;
 
 const DEFAULT_COLOR: &str = "#000000";
@@ -330,7 +329,7 @@ impl TypeExportRegistry {
         use_as: Vec<UseAs>,
     ) -> ExportConversionResult {
         let (value_type_field, value_property_type) =
-            type_to_field(registry.get(info.item_ty().id()).unwrap())?;
+            type_to_field(registry.get(info.value_ty().id()).unwrap())?;
         let (key_type_field, key_property_type) =
             type_to_field(registry.get(info.key_ty().id()).unwrap())?;
 
@@ -394,7 +393,7 @@ impl TypeExportRegistry {
         use_as: Vec<UseAs>,
     ) -> ExportConversionResult {
         let (_type_field, _property_type) =
-            type_to_field(registry.get(info.item_ty().id()).unwrap())?;
+            type_to_field(registry.get(info.value_ty().id()).unwrap())?;
 
         let root = TypeExport {
             id: self.next_id(),

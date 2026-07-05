@@ -20,9 +20,8 @@ use bevy::{
 };
 use std::alloc;
 use std::collections::HashSet;
+use std::hash::Hash;
 use std::path::PathBuf;
-use bevy::reflect::list::DynamicList;
-
 #[derive(Debug, Clone)]
 pub(crate) struct DeserializedMapProperties<const HYDRATED: bool = false> {
     pub(crate) map: DeserializedProperties,
@@ -583,13 +582,13 @@ impl DeserializedProperties {
 
                 Ok(Box::new(out))
             }
-            (_, PV::ClassValue { mut properties, .. }, TypeInfo::Set(_)) => {
-                let mut set = HashSet::new();
+            (_, PV::ClassValue { mut properties, .. }, TypeInfo::Set(info)) => {
+                let mut list = Vec::new();
 
-                let Some(reg) = registry.get(info.item_ty().id()) else {
+                let Some(reg) = registry.get(info.value_ty().id()) else {
                     return Err(format!(
                         "type `{}` is not registered",
-                        info.item_ty().path()
+                        info.value_ty().path()
                     ));
                 };
 
@@ -607,21 +606,28 @@ impl DeserializedProperties {
                 for item in items {
                     let value =
                         Self::deserialize_property(item, reg, registry, load_cx, default_value)?;
-                    set.push(value)
+                    list.push(value);
                 }
 
-                let mut out = DynamicSet::from_iter(set);
+                let mut out = DynamicSet::from_iter(list);
                 out.set_represented_type(Some(registration.type_info()));
 
                 Ok(Box::new(out))
             }
-            (_, PV::ClassValue { .. }, TypeInfo::Map(_)) => {
-                let mut map = HashMap::new();
+            (_, PV::ClassValue { mut properties, .. }, TypeInfo::Map(info)) => {
+                let mut list = Vec::new();
 
-                let Some(reg) = registry.get(info.item_ty().id()) else {
+                let Some(reg) = registry.get(info.key_ty().id()) else {
                     return Err(format!(
-                        "type `{}` is not registered",
-                        info.item_ty().path()
+                        "key type `{}` is not registered",
+                        info.key_ty().path()
+                    ));
+                };
+
+                let Some(reg) = registry.get(info.value_ty().id()) else {
+                    return Err(format!(
+                        "value type `{}` is not registered",
+                        info.value_ty().path()
                     ));
                 };
 
@@ -665,10 +671,10 @@ impl DeserializedProperties {
                         default_value,
                     )?;
 
-                    map.insert(key, value)
+                    list.push((key, value));
                 }
 
-                let mut out = DynamicMap::from_iter(map);
+                let mut out = DynamicMap::from_iter(list);
                 out.set_represented_type(Some(registration.type_info()));
 
                 Ok(Box::new(out))
