@@ -649,29 +649,35 @@ impl DeserializedProperties {
                         return Err(format!("wrong property type for map item"));
                     };
 
-                    let Some(key_prop) = properties.remove("key") else {
-                        return Err(format!("missing property on map item: `key`",));
+                    let mut key = match default_value_from_type_path(registry, info.key_ty().path()) {
+                        Some(_) => tmp.as_deref(),
+                        None => default_value,
                     };
 
-                    let key = Self::deserialize_property(
-                        key_prop,
-                        key_reg,
-                        registry,
-                        load_cx,
-                        default_value,
-                    )?;
-
-                    let Some(value_prop) = properties.remove("value") else {
-                        return Err(format!("missing property on map item: `value`",));
+                    if let Some(key_prop) = properties.remove("key") {
+                        key = Self::deserialize_property(
+                            key_prop,
+                            key_reg,
+                            registry,
+                            load_cx,
+                            default_value,
+                        )?;
                     };
 
-                    let value = Self::deserialize_property(
-                        value_prop,
-                        value_reg,
-                        registry,
-                        load_cx,
-                        default_value,
-                    )?;
+                    let mut value = match default_value_from_type_path(registry, info.value_ty().path()) {
+                        Some(_) => tmp.as_deref(),
+                        None => default_value,
+                    };
+
+                    if let Some(value_prop) = properties.remove("value") {
+                        value = Self::deserialize_property(
+                            value_prop,
+                            value_reg,
+                            registry,
+                            load_cx,
+                            default_value,
+                        )?;
+                    };
 
                     list.push((key, value));
                 }
