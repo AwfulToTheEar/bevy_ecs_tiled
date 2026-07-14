@@ -6,11 +6,11 @@ use bevy::{
     platform::collections::HashMap,
     prelude::*,
     reflect::{
-        list::DynamicList,
-        set::DynamicSet,
-        map::DynamicMap,
         array::DynamicArray,
         enums::{DynamicEnum, DynamicVariant, VariantInfo, VariantType},
+        list::DynamicList,
+        map::DynamicMap,
+        set::DynamicSet,
         structs::DynamicStruct,
         tuple::DynamicTuple,
         tuple_struct::DynamicTupleStruct,
@@ -649,10 +649,7 @@ impl DeserializedProperties {
                         return Err(format!("wrong property type for map item"));
                     };
 
-                    let mut key = match default_value_from_type_path(registry, info.key_ty().path()) {
-                        Some(_) => tmp.as_deref(),
-                        None => default_value,
-                    };
+                    let mut key;
 
                     if let Some(key_prop) = properties.remove("key") {
                         key = Self::deserialize_property(
@@ -662,12 +659,18 @@ impl DeserializedProperties {
                             load_cx,
                             default_value,
                         )?;
-                    };
+                    }
+                    else if let Some(def) = default_value_from_type_path(registry, info.key_ty().path())
+                    {
+                        key = def.into_partial_reflect()
+                    }
+                    else {
+                        return Err(format!("missing key for map item on type  {}", info.type_path()));
+                    }
 
-                    let mut value = match default_value_from_type_path(registry, info.value_ty().path()) {
-                        Some(_) => tmp.as_deref(),
-                        None => default_value,
-                    };
+
+
+                    let mut value;
 
                     if let Some(value_prop) = properties.remove("value") {
                         value = Self::deserialize_property(
@@ -677,7 +680,14 @@ impl DeserializedProperties {
                             load_cx,
                             default_value,
                         )?;
-                    };
+                    }
+                    else if let Some(def) =
+                        default_value_from_type_path(registry, info.value_ty().path())
+                    {
+                        value = def.into_partial_reflect()
+                    } else {
+                        return Err(format!("missing value for map item on type  {}", info.type_path()));
+                    }
 
                     list.push((key, value));
                 }

@@ -51,7 +51,7 @@ user_properties = ["dep:serde", "dep:serde_json"]
 # Main dependencies
 bevy = { version = "0.19.0", default-features = false }
 bevy_ecs_tilemap = { git = "https://github.com/taboky-dev/bevy_ecs_tilemap.git", rev = "b5dfea8", default-features = false }
-tiled = { git = "https://github.com/mapeditor/rs-tiled.git", branch = "next", features = ["world"] }
+tiled = { version = "0.16.0", features = ["world"] }
 
 # Utilities
 futures-lite = "2.6"

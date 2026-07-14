@@ -175,7 +175,8 @@ impl TiledObject {
                         offset,
                         font_size: pixel_size,
                     }
-                }
+                },
+                tiled::ObjectShape::Capsule {..} => TiledObject::Point
             }
         }
     }
